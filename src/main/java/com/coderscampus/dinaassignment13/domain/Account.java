@@ -3,6 +3,7 @@ package com.coderscampus.dinaassignment13.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,8 +18,9 @@ import javax.persistence.Table;
 public class Account {
 	private Long accountId;
 	private String accountName;
-	private List<Transaction> transactions = new ArrayList<>(); // one-to-many
-	private List<User> users = new ArrayList<>();
+	private List<Transaction> transactions = new ArrayList<>(); // one-to-many relationship: 1 account <-> many
+																// transactions
+	private List<User> users = new ArrayList<>(); // many-to-many relationship: users <-> accounts
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,16 +41,42 @@ public class Account {
 		this.accountName = accountName;
 	}
 
-	@OneToMany(mappedBy = "account")
+	@OneToMany(mappedBy = "account") // variable name from child table to map to parent table
 	public List<Transaction> getTransactions() {
 		return transactions;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accountId == null) ? 0 : accountId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Account other = (Account) obj;
+		if (accountId == null) {
+			if (other.accountId != null)
+				return false;
+		} else if (!accountId.equals(other.accountId))
+			return false;
+		return true;
 	}
 
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
 	}
 
-	@ManyToMany(mappedBy = "accounts")
+	// Many-to-many relationship mapped on User side by variable "accounts"
+	@ManyToMany(mappedBy = "accounts", cascade = CascadeType.PERSIST)
 	public List<User> getUsers() {
 		return users;
 	}

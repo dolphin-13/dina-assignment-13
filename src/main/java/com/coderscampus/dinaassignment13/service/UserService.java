@@ -52,41 +52,21 @@ public class UserService {
 	public User saveUser(User user) {
 		if (user.getUserId() == null) {
 
-			Account checking = new Account();
-			checking.setAccountName("Checking Account");
-			checking.getUsers().add(user);
+			Account account = new Account();
+			account.getUsers().add(user);
 
-			Account savings = new Account();
-			savings.setAccountName("Saving Account");
-			checking.getUsers().add(user);
+			user.getAccounts().add(account);
 
-			user.getAccounts().add(checking);
-			user.getAccounts().add(savings);
-
-			accountRepo.save(checking);
-			accountRepo.save(savings);
+			accountRepo.save(account);
 		}
-
-		// CascadeTypes => PERSIST, MERGE, REMOVE
-		// PERSIST, MERGE, REMOVE
-		// PERSIST new User() <-> new Address() --> saveUser()
-		// MERGE existingUser -> new/updating Address() --> saveUser()
-		// REMOVE existingUser -> setAddress(null) --> saveUser()
-
-		/*
-		 * if (user.getAddress() == null) {
-		 * 
-		 * Address address = new Address(); address.setAddressLine1("123 Fake St");
-		 * address.setAddressLine2("Unit 4"); address.setCity("Some City");
-		 * address.setCountry("Some Country"); address.setRegion("Some Region");
-		 * address.setZipCode("12345"); address.setUser(user);
-		 * address.setUserId(user.getUserId()); user.setAddress(address);
-		 * 
-		 * }
-		 */
 
 		return userRepo.save(user);
 
+	}
+
+	public User findUserByIdWithAccounts(Long userId) {
+		Optional<User> userO = userRepo.findUserByIdAndTheirAccounts(userId);
+		return userO.orElse(new User());
 	}
 
 	public void delete(Long userId) {

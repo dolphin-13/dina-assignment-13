@@ -17,7 +17,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 //This class with the annotations is helping Hibernate to create a table using SQL script
-@Entity // Class name = User, DB table name = user
+//ORM: object relational mapping which is Hibernate
+//jdbc: java database connectivity
+
+@Entity // Class name = User, DB table name = users
 @Table(name = "users")
 public class User {
 	private Long userId;
@@ -25,8 +28,8 @@ public class User {
 	private String password;
 	private String name;
 	private LocalDate createdDate;
-	private List<Account> accounts = new ArrayList<>();
-	private Address address;
+	private List<Account> accounts = new ArrayList<>();// many-to-many relationship: users <-> accounts
+	private Address address; // object from one-to-one relationship
 
 	@Id // Primary Key
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // Automatically incrementing
@@ -62,7 +65,7 @@ public class User {
 		this.name = name;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY) // fetching in jpql Java Persistent Query Language
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE })
 	@JoinTable(name = "user_account", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
 	public List<Account> getAccounts() {
 		return accounts;

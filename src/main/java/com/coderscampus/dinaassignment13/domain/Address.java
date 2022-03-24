@@ -14,8 +14,9 @@ public class Address {
 	 * varchar(100) region varchar(100) country varchar(100) zip_code varchar(15)
 	 */
 
+	// One-to-One relationship maps objects, object to object
 	private Long userId;
-	private User user;
+	private User user; // Object of one-to-one relationship
 	private String addressLine1;
 	private String addressLine2;
 	private String city;
@@ -95,6 +96,31 @@ public class Address {
 
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Address other = (Address) obj;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
 	}
 
 }
